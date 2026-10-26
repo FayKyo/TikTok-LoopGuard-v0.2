@@ -1,0 +1,32 @@
+name: Build APK
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Arrange flat files into the Android project layout
+        run: |
+          mkdir -p app/src/main/java/com/loopguard/tiktok app/src/main/res/xml app/src/main/res/values
+          mv -f app-build.gradle.kts app/build.gradle.kts
+          mv -f AndroidManifest.xml app/src/main/
+          mv -f accessibility_service_config.xml app/src/main/res/xml/
+          mv -f strings.xml themes.xml app/src/main/res/values/
+          mv -f Prefs.kt LoopGuardService.kt LockoutActivity.kt MainActivity.kt Screens.kt app/src/main/java/com/loopguard/tiktok/
+          find . -type f -not -path "./.git/*" | sort
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TikTok-LoopGuard-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk

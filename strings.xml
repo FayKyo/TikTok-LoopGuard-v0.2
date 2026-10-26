@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TikTok LoopGuard</string>
+    <string name="service_description">Detects when TikTok is open, counts video loops and session time, and sends TikTok Home once your limit is reached. Only TikTok screens are read; nothing leaves your device.</string>
+</resources>
