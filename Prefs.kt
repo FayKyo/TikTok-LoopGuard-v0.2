@@ -31,8 +31,17 @@ class Prefs(context: Context) {
         get() = sp.getBoolean("enabled", true)
         set(v) = sp.edit().putBoolean("enabled", v).apply()
 
+    /** Simple mode: close TikTok when the screen hasn't been swiped for [noSwipeMin] minutes. */
+    var noSwipeEnabled: Boolean
+        get() = sp.getBoolean("noSwipeEnabled", true)
+        set(v) = sp.edit().putBoolean("noSwipeEnabled", v).apply()
+
+    var noSwipeMin: Int
+        get() = sp.getInt("noSwipeMin", 10)
+        set(v) = sp.edit().putInt("noSwipeMin", v).apply()
+
     var loopLimitEnabled: Boolean
-        get() = sp.getBoolean("loopLimitEnabled", true)
+        get() = sp.getBoolean("loopLimitEnabled", false)
         set(v) = sp.edit().putBoolean("loopLimitEnabled", v).apply()
 
     var loopLimit: Int

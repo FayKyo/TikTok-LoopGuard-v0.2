@@ -67,6 +67,7 @@ class LoopGuardService : AccessibilityService() {
     private var tiktokPkg = ""
     private var leftAt = 0L
     private var activeMs = 0L
+    private var idleMs = 0L   // time since the last swipe / new video
     private var loops = 0
     private var lastFraction = -1f
     private var lastLoopAt = 0L
@@ -79,6 +80,10 @@ class LoopGuardService : AccessibilityService() {
         override fun run() {
             if (inTikTok && !intervening && prefs.enabled && prefs.isActiveNow()) {
                 activeMs += 1000
+                idleMs += 1000
+                if (prefs.noSwipeEnabled && idleMs >= prefs.noSwipeMin * 60_000L) {
+                    intervene("No swipe for ${prefs.noSwipeMin} min")
+                }
                 if (prefs.timeLimitEnabled && activeMs >= prefs.timeLimitMin * 60_000L) {
                     intervene("Time limit (${prefs.timeLimitMin} min)")
                 }
@@ -141,6 +146,7 @@ class LoopGuardService : AccessibilityService() {
     }
 
     private fun onNewVideo() {
+        idleMs = 0L
         loops = 0
         lastFraction = -1f
         lastLoopAt = 0L

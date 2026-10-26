@@ -111,6 +111,8 @@ fun SettingsScreen(prefs: Prefs, refresh: Int) {
     val serviceOn = remember(refresh) { isAccessibilityEnabled(ctx) }
 
     var enabled by remember { mutableStateOf(prefs.enabled) }
+    var swipeOn by remember { mutableStateOf(prefs.noSwipeEnabled) }
+    var swipeMin by remember { mutableIntStateOf(prefs.noSwipeMin) }
     var loopOn by remember { mutableStateOf(prefs.loopLimitEnabled) }
     var loopLimit by remember { mutableIntStateOf(prefs.loopLimit) }
     var loopText by remember { mutableStateOf(prefs.loopLimit.toString()) }
@@ -164,6 +166,23 @@ fun SettingsScreen(prefs: Prefs, refresh: Int) {
 
         Section("Protection") {
             SwitchRow("LoopGuard enabled", null, enabled) { enabled = it; prefs.enabled = it }
+        }
+
+        Section("No-swipe timer") {
+            SwitchRow(
+                "Close TikTok if I stop swiping",
+                "Counts up while you stay on the same video; any swipe resets it",
+                swipeOn
+            ) { swipeOn = it; prefs.noSwipeEnabled = it }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(1, 2, 5, 10).forEach { m ->
+                    FilterChip(
+                        selected = swipeMin == m,
+                        onClick = { swipeMin = m; prefs.noSwipeMin = m },
+                        label = { Text("$m min") }
+                    )
+                }
+            }
         }
 
         Section("Loop limit") {
